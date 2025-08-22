@@ -3,10 +3,12 @@ package org.phileasfogg3.limitedLife.Listeners;
 import net.nexia.nexiaapi.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.phileasfogg3.limitedLife.LimitedLife;
@@ -248,6 +250,23 @@ public class PlayerListener implements Listener {
         saveConfig(player, playerMap);
     }
 
+    @EventHandler
+    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        if (event.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.OK) {
+            Player player = event.getPlayer();
+
+            player.leaveVehicle();
+            player.setSleepingIgnored(true);
+
+            Bukkit.getScheduler().runTaskLater(LimitedLife.Instance, () -> {
+                if (player.isSleeping()) {
+                    player.wakeup(true);
+                    player.sendMessage(ChatColor.RED + "I'm sorry... you can't rest your eyes right now, you're too worried about werewolves that are on the prowl.");
+                }
+                player.setSleepingIgnored(false);
+            }, 1L);
+        }
+    }
 
     private Map<String, Object> getPlayerValues(Player player) {
         return playerData.getData().getConfigurationSection("players." + player.getUniqueId()).getValues(false);
