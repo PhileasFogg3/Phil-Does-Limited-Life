@@ -1,12 +1,10 @@
 package org.phileasfogg3.limitedLife.Werewolf;
 
 import net.nexia.nexiaapi.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WerewolfManager {
 
@@ -14,7 +12,7 @@ public class WerewolfManager {
     private Config gameMgr;
     private Config werewolf;
 
-    public StateManager stateManager = new StateManager();
+    public StateManager stateManager = new StateManager(werewolf);
 
     public List<String> blankInteractions = new ArrayList<>();
 

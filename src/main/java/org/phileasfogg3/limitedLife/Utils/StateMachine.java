@@ -1,8 +1,13 @@
 package org.phileasfogg3.limitedLife.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class StateMachine<T> {
+
+    public List<Consumer<T>> onStateChanged = new ArrayList<>();
 
     T _currentState = null;
     HashMap<T, Runnable> _states = new HashMap<>();
@@ -24,7 +29,7 @@ public class StateMachine<T> {
         return this;
     }
 
-    public boolean changeState(T state) {
+    public boolean setState(T state) {
         if (!_states.containsKey(state)) {
             return false;
         }
@@ -35,6 +40,7 @@ public class StateMachine<T> {
 
         _states.get(state).run();
         _currentState = state;
+        onStateChanged.forEach(c -> c.accept(state));
 
         if (_postState != null) {
             _postState.run();

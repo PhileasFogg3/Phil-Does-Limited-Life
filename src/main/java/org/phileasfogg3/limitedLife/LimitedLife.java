@@ -8,7 +8,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeAdminCommand;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeCommand;
 import org.phileasfogg3.limitedLife.Listeners.MobListener;
-import org.phileasfogg3.limitedLife.Werewolf.PlayerInteractions;
 import org.phileasfogg3.limitedLife.Listeners.PlayerListener;
 import org.phileasfogg3.limitedLife.Listeners.RecipieViewer;
 import org.phileasfogg3.limitedLife.Managers.RecipesManager;
