@@ -60,6 +60,7 @@ public final class LimitedLife extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(playerData, gameMgr, messagesData, werewolf), this);
         getServer().getPluginManager().registerEvents(new RecipieViewer(), this);
         getServer().getPluginManager().registerEvents(new MobListener(gameMgr), this);
+        getServer().getPluginManager().registerEvents(new GUIManager(playerData, gameMgr, werewolf), this);
 
     }
 
