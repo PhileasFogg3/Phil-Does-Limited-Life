@@ -8,6 +8,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeAdminCommand;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeCommand;
 import org.phileasfogg3.limitedLife.Listeners.MobListener;
+import org.phileasfogg3.limitedLife.Werewolf.GUIManager;
 import org.phileasfogg3.limitedLife.Werewolf.PlayerInteractions;
 import org.phileasfogg3.limitedLife.Listeners.PlayerListener;
 import org.phileasfogg3.limitedLife.Listeners.RecipieViewer;
@@ -60,6 +61,7 @@ public final class LimitedLife extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(playerData, gameMgr, messagesData, werewolf), this);
         getServer().getPluginManager().registerEvents(new RecipieViewer(), this);
         getServer().getPluginManager().registerEvents(new MobListener(gameMgr), this);
+        getServer().getPluginManager().registerEvents(new GUIManager(playerData, gameMgr, werewolf), this);
 
     }
 

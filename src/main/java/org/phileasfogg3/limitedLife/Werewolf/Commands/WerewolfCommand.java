@@ -46,7 +46,9 @@ public class WerewolfCommand implements CommandExecutor, TabCompleter {
             switch (args[0].toLowerCase()) {
 
                 case "accuse":
-                    GUIManager.open(player, ChatColor.RED + "Accuse a fellow Villager", (List<Player>) Bukkit.getOnlinePlayers());
+                    List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+                    players.remove(player);
+                    GUIManager.open(player, ChatColor.RED + "Accuse a fellow Villager", players);
                     break;
                 default:
                     player.sendMessage(ChatColor.RED + "Unknown command: " + args[0]);
