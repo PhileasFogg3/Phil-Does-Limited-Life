@@ -23,7 +23,7 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
     private Config messagesData;
     private Config werewolf;
 
-    private static final List<String> SUBCOMMANDS = Arrays.asList("sessionstart", "cure", "confirm", "resume", "addtime", "subtracttime", "rollboogeymen");
+    private static final List<String> SUBCOMMANDS = Arrays.asList("sessionstart", "cure", "confirm", "resume", "addtime", "subtracttime", "rollboogeymen", "debug_1", "debug_2");
     private static final List<String> SESSION_START = Arrays.asList("");
     private static final List<String> BOOGEY_ROLL_1 = Arrays.asList("<number of boogeymen>");
     private static final List<String> CONFIRM = Arrays.asList("");
@@ -111,6 +111,12 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
                         break;
                     case "rollboogeymen":
                         handleBoogeyManRoll(sender, args);
+                        break;
+                    case "debug_1":
+                        LimitedLife.werewolfManager.start();
+                        break;
+                    case "debug_2":
+                        LimitedLife.werewolfManager.end();
                         break;
                     default:
                         //Unkown Command
