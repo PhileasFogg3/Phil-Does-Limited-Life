@@ -12,10 +12,13 @@ TASKS AND THINGS TO DO AND STUFF
   - [ ] WEREWOLVES WIN WHEN WEREWOLVES COUNT = VILLAGER COUNT (OR MORE WEREWOLVES)
   - [ ] VILLAGERS WIN WHEN NO WEREWOLVES REMAIN
 - [x] STATE MACHINE
-  - MORNING -- TIME BEFORE VOTING STARTS (IDLE)
-  - VOTING -- VOTING LASTS FOR A COUPLE OF MINUTES
-  - ROAMING -- TIME FOR INTERACTIONS (IDLE)
-  - NIGHT -- WAITING FOR NIGHTTIME (IDLE)
-  - SLEEP -- BLINDNESS BEGINS TO SIMULATE SLEEP
-  - ACTIONS -- TIME FOR SPECIAL ACTIONS
-  - WAKEUP -- BLINDNESS IS REMOVED
+  - Disabled -- Nothing happens here
+  - Waiting  -- Initial waiting time (idle)
+  - Roles    -- Roles are picked here then wait for morning
+  - Morning  -- Time before voting starts (idle)
+  - Voting   -- Voting lasts for a couple of minutes
+  - Roaming  -- Time for interactions (idle)
+  - Night    -- Waiting for nighttime (idle)
+  - Sleep    -- Blindness begins to simulate sleep
+  - Actions  -- Time for special actions
+  - WakeUp   -- Blindness is removed

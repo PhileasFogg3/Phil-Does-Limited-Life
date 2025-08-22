@@ -26,6 +26,8 @@ public class PlayerListener implements Listener {
     private Config messagesData;
     private Config werewolf;
 
+    private final WerewolfManager wmManager = LimitedLife.werewolfManager;
+
     public PlayerListener(Config playerData, Config gameMgr, Config messagesData, Config werewolf) {
         this.playerData = playerData;
         this.gameMgr = gameMgr;
@@ -79,8 +81,7 @@ public class PlayerListener implements Listener {
         }
 
         // Relevant to Werewolf
-        WerewolfManager WM = new WerewolfManager(playerData, gameMgr, werewolf);
-        WM.initialisePlayers(player);
+        wmManager.initialisePlayers(player);
     }
 
     @EventHandler

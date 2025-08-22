@@ -14,6 +14,8 @@ public class WerewolfManager {
     private Config gameMgr;
     private Config werewolf;
 
+    public StateManager stateManager = new StateManager();
+
     public List<String> blankInteractions = new ArrayList<>();
 
     public WerewolfManager(Config playerData, Config gameMgr, Config werewolf) {
@@ -37,6 +39,14 @@ public class WerewolfManager {
 
         }
 
+    }
+
+    public void start() {
+        stateManager.start();
+    }
+
+    public void end() {
+        stateManager.end();
     }
 
     public void clearInteractions(Player player) {
