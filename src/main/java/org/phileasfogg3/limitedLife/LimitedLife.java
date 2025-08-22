@@ -8,11 +8,13 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeAdminCommand;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeCommand;
 import org.phileasfogg3.limitedLife.Listeners.MobListener;
+import org.phileasfogg3.limitedLife.Werewolf.PlayerInteractions;
 import org.phileasfogg3.limitedLife.Listeners.PlayerListener;
 import org.phileasfogg3.limitedLife.Listeners.RecipieViewer;
 import org.phileasfogg3.limitedLife.Managers.RecipesManager;
 import org.phileasfogg3.limitedLife.Managers.TeamsManager;
 import org.phileasfogg3.limitedLife.Managers.TimerManager;
+import org.phileasfogg3.limitedLife.Werewolf.WerewolfManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ public final class LimitedLife extends JavaPlugin {
     public HashMap<UUID, TimerManager> countdowns = new HashMap<>();
     public Map<UUID, Boolean> timerDisplayToggle = new HashMap<>();
 
+    public static WerewolfManager werewolfManager;
 
     Config gameMgr = new Config(this, "gameManager.yml");
     Config playerData = new Config(this, "playerData.yml");
@@ -36,6 +39,7 @@ public final class LimitedLife extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         Instance = this;
+        werewolfManager = new WerewolfManager(playerData, gameMgr, werewolf);
 
         createTeams();
         registerRecipes();
