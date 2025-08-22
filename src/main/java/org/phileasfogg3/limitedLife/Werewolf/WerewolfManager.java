@@ -12,7 +12,7 @@ public class WerewolfManager {
     private Config gameMgr;
     private Config werewolf;
 
-    public StateManager stateManager = new StateManager(werewolf);
+    public final StateManager stateManager;
 
     public List<String> blankInteractions = new ArrayList<>();
 
@@ -20,6 +20,7 @@ public class WerewolfManager {
         this.playerData = playerData;
         this.gameMgr = gameMgr;
         this.werewolf = werewolf;
+        stateManager = new StateManager(werewolf);
     }
 
 

@@ -28,7 +28,7 @@ public class StateManager {
     }
 
     private final StateMachine<GameStates> _gameState = new StateMachine<>();
-    private final Config wmConfig;
+    private final Config wwConfig;
     private BukkitTask task;
 
     public List<Runnable> onWaiting = new ArrayList<>();
@@ -43,7 +43,7 @@ public class StateManager {
 
     public StateManager(Config werewolf) {
 
-        this.wmConfig = werewolf;
+        this.wwConfig = werewolf;
 
         _gameState.addState(GameStates.Waiting, this::waiting);
         _gameState.addState(GameStates.Roles, this::roles).setPostState(this::postRoles);
@@ -131,13 +131,13 @@ public class StateManager {
     }
 
     public long getTime() {
-        String worldName = wmConfig.getData().getString("world_name");
+        String worldName = wwConfig.getData().getString("world_name");
         if (worldName == null) worldName = "world";
         return Objects.requireNonNull(Bukkit.getServer().getWorld(worldName)).getTime();
     }
 
     public void setTime(long tick) {
-        String worldName = wmConfig.getData().getString("world_name");
+        String worldName = wwConfig.getData().getString("world_name");
         if (worldName == null) worldName = "world";
         Objects.requireNonNull(Bukkit.getServer().getWorld(worldName)).setTime(tick);
     }
