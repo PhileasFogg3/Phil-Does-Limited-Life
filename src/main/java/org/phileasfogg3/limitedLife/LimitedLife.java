@@ -13,6 +13,7 @@ import org.phileasfogg3.limitedLife.Listeners.RecipieViewer;
 import org.phileasfogg3.limitedLife.Managers.RecipesManager;
 import org.phileasfogg3.limitedLife.Managers.TeamsManager;
 import org.phileasfogg3.limitedLife.Managers.TimerManager;
+import org.phileasfogg3.limitedLife.Werewolf.Commands.WerewolfCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,6 +67,10 @@ public final class LimitedLife extends JavaPlugin {
         LimitedLifeAdminCommand adminCommand = new LimitedLifeAdminCommand(playerData, gameMgr, messagesData, werewolf);
         getCommand("limitedlifeadmin").setExecutor(adminCommand);
         getCommand("limitedlifeadmin").setTabCompleter(adminCommand);
+
+        WerewolfCommand werewolfCommand = new WerewolfCommand(playerData, gameMgr, werewolf);
+        getCommand("werewolf").setExecutor(werewolfCommand);
+        getCommand("werewolf").setTabCompleter(werewolfCommand);
     }
 
 

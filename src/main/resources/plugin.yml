@@ -13,3 +13,6 @@ commands:
   limitedlifeadmin:
     description: Main admin command
     usage: /limitedlifeadmin <sessionStart|cure|addTime|subtractTime|confirm|resume|rollboogeymen>
+  werewolf:
+    description: Command for playing werewolf
+    usage: /werewolf

@@ -10,12 +10,10 @@ org\phileasfogg3\limitedLife\Managers\SessionManager.class
 org\phileasfogg3\limitedLife\Managers\BoogeymenManager$3.class
 org\phileasfogg3\limitedLife\LimitedLife.class
 org\phileasfogg3\limitedLife\Commands\LimitedLifeAdminCommand$1.class
-org\phileasfogg3\limitedLife\Werewolf\PlayerInitialiser.class
 org\phileasfogg3\limitedLife\Listeners\RecipieViewer.class
 org\phileasfogg3\limitedLife\Commands\LimitedLifeCommand.class
 org\phileasfogg3\limitedLife\Listeners\PlayerListener.class
 org\phileasfogg3\limitedLife\Managers\PlayerNameManager.class
-org\phileasfogg3\limitedLife\Werewolf\PlayerInitialiser$1.class
 org\phileasfogg3\limitedLife\Managers\SessionManager$1.class
 org\phileasfogg3\limitedLife\Managers\BoogeymenManager$2.class
 org\phileasfogg3\limitedLife\Commands\LimitedLifeAdminCommand.class
