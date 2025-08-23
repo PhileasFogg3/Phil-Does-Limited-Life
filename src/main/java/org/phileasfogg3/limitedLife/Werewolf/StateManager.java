@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 import org.phileasfogg3.limitedLife.LimitedLife;
-import org.phileasfogg3.limitedLife.Utils.StateMachine;
+import org.phileasfogg3.limitedLife.Utils.StateMachine.StateMachine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class StateManager {
         this.worldName = worldName;
 
         _gameState.addState(GameStates.Waiting, this::waiting);
-        _gameState.addState(GameStates.Roles, this::roles).setPostState(this::postRoles);
+        _gameState.addState(GameStates.Roles, this::roles).setPostChange(this::postRoles);
         _gameState.addState(GameStates.Morning, this::morning);
         _gameState.addState(GameStates.Voting, this::voting);
         _gameState.addState(GameStates.Roaming, this::roaming);
@@ -83,7 +83,10 @@ public class StateManager {
             long time = getTime();
             if (time < 6000 && time > 0) {
                 task.cancel();
-                _gameState.setState(GameStates.Morning);
+                task = null;
+                Bukkit.getScheduler().runTaskLater(LimitedLife.Instance, () -> {
+                    _gameState.setState(GameStates.Morning);
+                }, 20);
             }
         }, 0, 200);
     }
@@ -128,6 +131,7 @@ public class StateManager {
         _gameState.setState(GameStates.Disabled);
         if (task != null) {
             task.cancel();
+            task = null;
         }
     }
 
