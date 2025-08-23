@@ -257,7 +257,15 @@ public class GUIManager implements Listener {
     public void handleClick(Player player, String title, String itemClickedName) {
         switch (title) {
             case "§cAccuse a fellow Villager":
-                player.openInventory(createVoteInv(itemClickedName));
+
+                Bukkit.broadcastMessage(ChatColor.GREEN + player.getName() + ChatColor.GRAY + " has accused " + ChatColor.RED + itemClickedName + ", you can cast your vote in 10 seconds.");
+
+                Bukkit.getScheduler().runTaskLater(LimitedLife.Instance, () -> {
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.openInventory(createVoteInv(itemClickedName));
+                    }
+                }, 200L);
+                
                 break;
             case "§aSelect a player to Heal":
                 break;
