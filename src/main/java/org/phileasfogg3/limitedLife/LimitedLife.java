@@ -15,6 +15,7 @@ import org.phileasfogg3.limitedLife.Managers.RecipesManager;
 import org.phileasfogg3.limitedLife.Managers.TeamsManager;
 import org.phileasfogg3.limitedLife.Managers.TimerManager;
 import org.phileasfogg3.limitedLife.Werewolf.Commands.WerewolfCommand;
+import org.phileasfogg3.limitedLife.Werewolf.WerewolfLogger;
 import org.phileasfogg3.limitedLife.Werewolf.WerewolfManager;
 
 import java.util.HashMap;
@@ -31,6 +32,8 @@ public final class LimitedLife extends JavaPlugin {
 
     public static WerewolfManager werewolfManager;
 
+    private WerewolfLogger werewolflogger;
+
     Config gameMgr = new Config(this, "gameManager.yml");
     Config playerData = new Config(this, "playerData.yml");
     Config messagesData = new Config(this, "messages.yml");
@@ -41,6 +44,7 @@ public final class LimitedLife extends JavaPlugin {
         // Plugin startup logic
         Instance = this;
         werewolfManager = new WerewolfManager(playerData, gameMgr, werewolf);
+        werewolflogger = new WerewolfLogger(this);
 
         createTeams();
         registerRecipes();

@@ -8,10 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.phileasfogg3.limitedLife.Werewolf.Commands.WerewolfCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,13 +142,13 @@ public class GUIManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player)) return;
+        if (!(e.getWhoClicked() instanceof Player player)) return;
 
         String title = e.getView().getTitle();
 
         System.out.println(title);
 
-        if (!(title.equals(ChatColor.RED + "Accuse a fellow Villager"))) return;
+        if (!(title.equals("§cAccuse a fellow Villager") || title.equals("§aSelect a player to Heal") || title.equals("§aSelect a player to Murder") || title.equals("§6Select a player to learn their role"))) return;
 
         e.setCancelled(true);
 
@@ -157,15 +159,54 @@ public class GUIManager implements Listener {
         switch (clicked.getType()) {
             case PLAYER_HEAD:
                 System.out.println("Player Head");
+                handleClick(player, title);
                 break;
             case BARRIER:
                 System.out.println("Barrier");
                 e.getWhoClicked().closeInventory();
+                if (title.equals("§cAccuse a fellow Villager")) {
+                    WerewolfCommand.accusationInProgress = false;
+                }
                 break;
             default:
                 System.out.println("Something else");
         }
 
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (!(e.getPlayer() instanceof Player player)) return;
+        Inventory inv = e.getInventory();
+        String title = e.getView().getTitle();
+
+        switch (title) {
+            case "§cAccuse a fellow Villager":
+                if (WerewolfCommand.accusationInProgress) {
+                    WerewolfCommand.accusationInProgress = false;
+                }
+                break;
+            case "§aSelect a player to Heal":
+                break;
+            case "§aSelect a player to Murder":
+                break;
+            case "§6Select a player to learn their role":
+                break;
+
+        }
+    }
+
+    public void handleClick(Player player, String title) {
+        switch (title) {
+            case "§cAccuse a fellow Villager":
+                break;
+            case "§aSelect a player to Heal":
+                break;
+            case "§aSelect a player to Murder":
+                break;
+            case "§6Select a player to learn their role":
+                break;
+        }
     }
 
     public List<UUID> getWerewolves() {

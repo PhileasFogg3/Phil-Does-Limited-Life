@@ -15,6 +15,7 @@ import org.phileasfogg3.limitedLife.LimitedLife;
 import org.phileasfogg3.limitedLife.Managers.BoogeymenManager;
 import org.phileasfogg3.limitedLife.Managers.PlayerNameManager;
 import org.phileasfogg3.limitedLife.Managers.TimerManager;
+import org.phileasfogg3.limitedLife.Werewolf.WerewolfLogger;
 import org.phileasfogg3.limitedLife.Werewolf.WerewolfManager;
 
 import java.util.HashMap;
@@ -243,7 +244,7 @@ public class PlayerListener implements Listener {
         Map<String, Object> playerMap = getPlayerValues(player);
 
         List<String> deathList = playerData.getData().getStringList("players." + player.getUniqueId() + ".Deaths");
-
+        
         deathList.add(deathMessage);
 
         playerMap.put("Deaths", deathList);

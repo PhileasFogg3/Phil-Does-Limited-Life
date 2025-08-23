@@ -8,7 +8,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.phileasfogg3.limitedLife.LimitedLife;
 import org.phileasfogg3.limitedLife.Werewolf.GUIManager;
+import org.phileasfogg3.limitedLife.Werewolf.WerewolfLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,8 @@ public class WerewolfCommand implements CommandExecutor, TabCompleter {
     private Config werewolf;
 
     private static final List<String> SUBCOMMANDS = Arrays.asList("accuse");
+
+    public static boolean accusationInProgress = false;
 
     public WerewolfCommand(Config playerData, Config gameMgr, Config werewolf) {
         this.playerData = playerData;
@@ -46,9 +50,19 @@ public class WerewolfCommand implements CommandExecutor, TabCompleter {
             switch (args[0].toLowerCase()) {
 
                 case "accuse":
-                    List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-                    players.remove(player);
-                    GUIManager.open(player, ChatColor.RED + "Accuse a fellow Villager", players);
+                    if (!accusationInProgress) {
+                        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+                        players.remove(player);
+                        GUIManager.open(player, ChatColor.RED + "Accuse a fellow Villager", players);
+
+                        // TODO REPLACE THIS WITH A PROPER MESSAGE ONCE ITS FINISHED
+                        WerewolfLogger WL = new WerewolfLogger(LimitedLife.Instance);
+                        WL.log(player.getName() + " is accusing someone of something.");
+
+                        accusationInProgress = true;
+                    } else {
+                        player.sendMessage(ChatColor.RED + "An accusation is already in progress, you need to wait.");
+                    }
                     break;
                 default:
                     player.sendMessage(ChatColor.RED + "Unknown command: " + args[0]);
