@@ -22,4 +22,4 @@ TASKS AND THINGS TO DO AND STUFF
   - Sleep    -- Blindness begins to simulate sleep
   - Actions  -- Time for special actions
   - WakeUp   -- Blindness is removed
-- [ ] CYCLE THROUGH THE DIFFERENT STATES
+- [x] CYCLE THROUGH THE DIFFERENT STATES

@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.phileasfogg3.limitedLife.LimitedLife;
 import org.phileasfogg3.limitedLife.Werewolf.Commands.WerewolfCommand;
 
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class GUIManager implements Listener {
         open(player, ChatColor.GREEN + "Select a player to Heal", players);
     }
 
-    public void openKill(Player player) {
+    public static void openKill(Player player) {
         List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
         // Remove players who are werewolves
         List<UUID> werewolves = getWerewolves();
@@ -209,8 +210,9 @@ public class GUIManager implements Listener {
         }
     }
 
-    public List<UUID> getWerewolves() {
+    public static List<UUID> getWerewolves() {
         List<UUID> werewolves = new ArrayList<>();
+        Config werewolf = new Config(LimitedLife.Instance, "werewolf.yml");
 
         werewolf.getData().getConfigurationSection("players.").getKeys(false).forEach((key -> {
             String role = werewolf.getData().getString("players." + key + ".Role");

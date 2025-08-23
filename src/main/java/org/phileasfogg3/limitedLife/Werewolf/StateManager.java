@@ -29,6 +29,7 @@ public class StateManager {
 
     private final StateMachine<GameStates> _gameState = new StateMachine<>();
     private final Config wwConfig;
+    private final String worldName;
     private BukkitTask task;
 
     public List<Runnable> onWaiting = new ArrayList<>();
@@ -44,6 +45,10 @@ public class StateManager {
     public StateManager(Config werewolf) {
 
         this.wwConfig = werewolf;
+
+        String worldName = werewolf.getData().getString("world_name");
+        if (worldName == null) worldName = "world";
+        this.worldName = worldName;
 
         _gameState.addState(GameStates.Waiting, this::waiting);
         _gameState.addState(GameStates.Roles, this::roles).setPostState(this::postRoles);
@@ -115,52 +120,34 @@ public class StateManager {
         onWakeUp.forEach(Runnable::run);
     }
 
-    public GameStates getState() {
-        return _gameState.getCurrentState();
-    }
-
     public void start() {
         _gameState.setState(GameStates.Waiting);
     }
 
     public void end() {
         _gameState.setState(GameStates.Disabled);
-        if (task != null && !task.isCancelled()) {
+        if (task != null) {
             task.cancel();
         }
     }
 
     public long getTime() {
-        String worldName = wwConfig.getData().getString("world_name");
-        if (worldName == null) worldName = "world";
         return Objects.requireNonNull(Bukkit.getServer().getWorld(worldName)).getTime();
     }
 
     public void setTime(long tick) {
-        String worldName = wwConfig.getData().getString("world_name");
-        if (worldName == null) worldName = "world";
         Objects.requireNonNull(Bukkit.getServer().getWorld(worldName)).setTime(tick);
     }
 
     private void loop() {
         long time = getTime();
 
-        if (tryChange(time, 0L, GameStates.Roles, GameStates.Morning)) return;
-        if (tryChange(time, 1000L, GameStates.Morning, GameStates.Voting)) return;
-        if (tryChange(time, 4600L, GameStates.Voting, GameStates.Roaming)) return;
-        if (tryChange(time, 12000L, GameStates.Roaming, GameStates.Night)) return;
-        if (tryChange(time, 13000L, GameStates.Night, GameStates.Sleep)) return;
-        if (tryChange(time, 18000L, GameStates.Sleep, GameStates.Actions)) return;
-        if (tryChange(time, 21600L, GameStates.Actions, GameStates.WakeUp)) return;
-        tryChange(time, 24000L, GameStates.WakeUp, GameStates.Morning);
+        if (time >= 0 && time < 1000) _gameState.setState(GameStates.WakeUp);
+        else if (time < 4600) _gameState.setState(GameStates.Morning);
+        else if (time < 12000) _gameState.setState(GameStates.Voting);
+        else if (time < 13000) _gameState.setState(GameStates.Roaming);
+        else if (time < 18000) _gameState.setState(GameStates.Night);
+        else if (time < 21600) _gameState.setState(GameStates.Sleep);
+        else if (time < 24000) _gameState.setState(GameStates.Actions);
     }
-
-    private boolean tryChange(long currentTime, long waitTime, GameStates from, GameStates to) {
-        if (getState() == from && currentTime >= waitTime) {
-            _gameState.setState(to);
-            return true;
-        }
-        return false;
-    }
-
 }

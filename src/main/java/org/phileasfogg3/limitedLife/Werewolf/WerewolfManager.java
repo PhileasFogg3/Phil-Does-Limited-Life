@@ -1,7 +1,6 @@
 package org.phileasfogg3.limitedLife.Werewolf;
 
 import net.nexia.nexiaapi.Config;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -14,28 +13,32 @@ public class WerewolfManager {
 
     public final StateManager stateManager;
 
-    public List<String> blankInteractions = new ArrayList<>();
-
     public WerewolfManager(Config playerData, Config gameMgr, Config werewolf) {
         this.playerData = playerData;
         this.gameMgr = gameMgr;
         this.werewolf = werewolf;
+
         stateManager = new StateManager(werewolf);
+        initializeStates();
     }
 
+    private void initializeStates() {
+        stateManager.onMorning.add(() -> {
+            clearInteractions();
+        });
+    }
 
     public void initialisePlayers(Player player) {
 
         if (!werewolf.getData().contains("players." + player.getUniqueId())) {
 
-            Map<String, Object> playerDataMap = new HashMap<String, Object>(){{
+            Map<String, Object> playerDataMap = new HashMap<>() {{
                 put("Role", "");
                 put("Alive", true);
-                put("Interactions", blankInteractions);
+                put("Interactions", new ArrayList<>());
             }};
 
-            saveWerewolfConfig(player, playerDataMap);
-
+            saveWerewolfConfig(player.getUniqueId(), playerDataMap);
         }
 
     }
@@ -48,18 +51,21 @@ public class WerewolfManager {
         stateManager.end();
     }
 
-    public void clearInteractions(Player player) {
+    public void clearInteractions() {
 
-        Map<String, Object> playerDataMap = getPlayerWerewolfValues(player);
-        playerDataMap.put("Interactions", blankInteractions);
-        saveWerewolfConfig(player, playerDataMap);
+        for (String id : getPlayersUUIDs()) {
+            UUID playerID = UUID.fromString(id);
+            Map<String, Object> playerDataMap = getPlayerWerewolfValues(playerID);
+            playerDataMap.put("Interactions", new ArrayList<>());
+            saveWerewolfConfig(playerID, playerDataMap);
+        }
 
     }
 
     public void logInteraction (Player player1, Player player2) {
 
-        Map<String, Object> player1DataMap = getPlayerWerewolfValues(player1);
-        Map<String, Object> player2DataMap = getPlayerWerewolfValues(player2);
+        Map<String, Object> player1DataMap = getPlayerWerewolfValues(player1.getUniqueId());
+        Map<String, Object> player2DataMap = getPlayerWerewolfValues(player2.getUniqueId());
 
         List<String> player1List = (List<String>) player1DataMap.get("Interactions");
         List<String> player2List = (List<String>) player2DataMap.get("Interactions");
@@ -71,21 +77,25 @@ public class WerewolfManager {
             player2List.add(player1.getName());
 
             player1DataMap.put("Interactions", player1List);
-            saveWerewolfConfig(player1, player1DataMap);
+            saveWerewolfConfig(player1.getUniqueId(), player1DataMap);
 
             player2DataMap.put("Interactions", player2List);
-            saveWerewolfConfig(player2, player2DataMap);
+            saveWerewolfConfig(player2.getUniqueId(), player2DataMap);
         }
 
     }
 
-    private Map<String, Object> getPlayerWerewolfValues(Player player) {
-        return werewolf.getData().getConfigurationSection("players." + player.getUniqueId()).getValues(false);
+    private Map<String, Object> getPlayerWerewolfValues(UUID playerID) {
+        return werewolf.getData().getConfigurationSection("players." + playerID).getValues(false);
     }
 
-    private void saveWerewolfConfig(Player player, Map<String, Object> playerDataMap) {
+    private Set<String> getPlayersUUIDs() {
+        return werewolf.getData().getConfigurationSection("players").getKeys(false);
+    }
+
+    private void saveWerewolfConfig(UUID playerID, Map<String, Object> playerDataMap) {
         // Method to save the playerData.yml file.
-        werewolf.getData().createSection("players." + player.getUniqueId(), playerDataMap);
+        werewolf.getData().createSection("players." + playerID, playerDataMap);
         werewolf.save();
     }
 

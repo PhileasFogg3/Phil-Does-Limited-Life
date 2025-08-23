@@ -18,8 +18,8 @@ public class PlayerInteractions {
         this.gameMgr = gameMgr;
         this.werewolf = werewolf;
 
-//        Bukkit.getScheduler().runTaskTimerAsynchronously()
-
     }
+
+
 
 }
