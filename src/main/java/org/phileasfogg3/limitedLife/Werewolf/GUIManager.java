@@ -57,16 +57,16 @@ public class GUIManager implements Listener {
 
             if (meta != null) {
                 meta.setOwningPlayer(p);
-                meta.setDisplayName(ChatColor.RED + "Accuse " + ChatColor.GREEN + p.getName());
+                meta.setDisplayName(ChatColor.GREEN + p.getName());
                 List<String> lore = new ArrayList<>();
                 switch (title) {
                     case "§cAccuse a fellow Villager":
                         lore.add(ChatColor.GRAY + "Click me to start a vote");
-                        lore.add(ChatColor.GRAY + "To banish " + p.getName());
+                        lore.add(ChatColor.GRAY + "To banish " + ChatColor.RED + p.getName());
                         lore.add(ChatColor.GRAY + "From the village");
                         break;
                     case "§aSelect a player to Heal":
-                        lore.add(ChatColor.GRAY + "Click me to heal " + p.getName() + ".");
+                        lore.add(ChatColor.GRAY + "Click me to heal " + ChatColor.RED + p.getName() + ChatColor.GRAY + ".");
                         lore.add(ChatColor.GRAY + "If the werewolves attack them,");
                         lore.add(ChatColor.GRAY + "They will not die tonight.");
                         break;
@@ -76,7 +76,7 @@ public class GUIManager implements Listener {
                         break;
                     case "§6Select a player to learn their role":
                         lore.add(ChatColor.GRAY + "Click me to");
-                        lore.add(ChatColor.GRAY + "learn about " + p.getName() + ".");
+                        lore.add(ChatColor.GRAY + "learn about " + ChatColor.RED + p.getName() + ChatColor.GRAY + ".");
                         lore.add(ChatColor.GRAY + "You will discover their role...");
                         break;
                 }
@@ -146,6 +146,58 @@ public class GUIManager implements Listener {
         open(player, ChatColor.GOLD + "Select a player to learn their role", players);
     }
 
+    public static Inventory createVoteInv(String accusedPlayer) {
+
+        Inventory inv = Bukkit.createInventory(null, 27, "§cVOTE TO ELIMINATE A PLAYER");
+
+        ItemStack yes = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+        ItemStack no = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        ItemStack filler = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
+
+        ItemMeta yesMeta = yes.getItemMeta();
+        ItemMeta noMeta = no.getItemMeta();
+        ItemMeta fillerMeta = filler.getItemMeta();
+
+        if (yesMeta != null) {
+            yesMeta.setDisplayName(ChatColor.GREEN + "Eliminate " + ChatColor.RED + accusedPlayer);
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "If you think " + ChatColor.RED + accusedPlayer);
+            lore.add(ChatColor.GRAY + "Is not a werewolf, vote " + ChatColor.GREEN + "YES" + ChatColor.GRAY + " to");
+            lore.add(ChatColor.GRAY + "Remove them from the Village.");
+            yesMeta.setLore(lore);
+        }
+
+        if (noMeta != null) {
+            noMeta.setDisplayName(ChatColor.GREEN + "Do Not Eliminate " + ChatColor.RED + accusedPlayer);
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "If you think " + ChatColor.RED + accusedPlayer);
+            lore.add(ChatColor.GRAY + "Is not a werewolf, vote " + ChatColor.RED + "NO" + ChatColor.GRAY + " to");
+            lore.add(ChatColor.GRAY + "Keep them safe.");
+            noMeta.setLore(lore);
+        }
+
+        if (fillerMeta != null) {
+            fillerMeta.setDisplayName("§kHELLO THERE");
+        }
+
+        yes.setItemMeta(yesMeta);
+        no.setItemMeta(noMeta);
+        filler.setItemMeta(fillerMeta);
+
+        inv.setItem(12, yes);
+        inv.setItem(14, no);
+
+        for (int i = 0; i < inv.getSize(); i++) {
+
+            ItemStack item = inv.getItem(i);
+
+            if (item == null) {
+                inv.setItem(i, filler);
+            }
+        }
+        return inv;
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player player)) return;
@@ -154,7 +206,7 @@ public class GUIManager implements Listener {
 
         System.out.println(title);
 
-        if (!(title.equals("§cAccuse a fellow Villager") || title.equals("§aSelect a player to Heal") || title.equals("§aSelect a player to Murder") || title.equals("§6Select a player to learn their role"))) return;
+        if (!(title.equals("§cAccuse a fellow Villager") || title.equals("§aSelect a player to Heal") || title.equals("§aSelect a player to Murder") || title.equals("§6Select a player to learn their role") || title.equals("§cVOTE TO ELIMINATE A PLAYER"))) return;
 
         e.setCancelled(true);
 
@@ -165,7 +217,7 @@ public class GUIManager implements Listener {
         switch (clicked.getType()) {
             case PLAYER_HEAD:
                 System.out.println("Player Head");
-                handleClick(player, title);
+                handleClick(player, title, clicked.getItemMeta().getDisplayName());
                 break;
             case BARRIER:
                 System.out.println("Barrier");
@@ -202,9 +254,10 @@ public class GUIManager implements Listener {
         }
     }
 
-    public void handleClick(Player player, String title) {
+    public void handleClick(Player player, String title, String itemClickedName) {
         switch (title) {
             case "§cAccuse a fellow Villager":
+                player.openInventory(createVoteInv(itemClickedName));
                 break;
             case "§aSelect a player to Heal":
                 break;
