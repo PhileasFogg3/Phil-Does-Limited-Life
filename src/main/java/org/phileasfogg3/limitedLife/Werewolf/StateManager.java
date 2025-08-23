@@ -51,7 +51,7 @@ public class StateManager {
         this.worldName = worldName;
 
         _gameState.addState(GameStates.Waiting, this::waiting);
-        _gameState.addState(GameStates.Roles, this::roles).setPostChange(this::postRoles);
+        _gameState.addState(GameStates.Roles, this::roles).setExit(this::exitRoles);
         _gameState.addState(GameStates.Morning, this::morning);
         _gameState.addState(GameStates.Voting, this::voting);
         _gameState.addState(GameStates.Roaming, this::roaming);
@@ -91,7 +91,7 @@ public class StateManager {
         }, 0, 200);
     }
 
-    private void postRoles() {
+    private void exitRoles() {
         task = Bukkit.getScheduler().runTaskTimer(LimitedLife.Instance, this::loop, 0, 20);
     }
 

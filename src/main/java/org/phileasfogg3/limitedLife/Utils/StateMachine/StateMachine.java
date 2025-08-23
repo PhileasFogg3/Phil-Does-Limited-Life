@@ -26,15 +26,16 @@ public class StateMachine<T> {
             return false;
         }
 
-        State state = _states.get(key);
+        if (_currentState != null) {
+            State previousState = _states.get(_currentState);
+            previousState.end();
+        }
 
-        state.preChange();
-        state.run();
+        State state = _states.get(key);
+        state.start();
 
         _currentState = key;
         onStateChanged.forEach(c -> c.accept(key));
-
-        state.postChange();
 
         return true;
     }

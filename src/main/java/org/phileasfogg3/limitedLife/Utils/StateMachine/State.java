@@ -3,41 +3,38 @@ package org.phileasfogg3.limitedLife.Utils.StateMachine;
 public class State {
 
     private Runnable _stateFunc;
-    private Runnable _preChangeFunc = null;
-    private Runnable _postChangeFunc = null;
+    private Runnable _enterFunc = null;
+    private Runnable _exitFunc = null;
 
     public State(Runnable func) {
         _stateFunc = func;
     }
 
-    public State setPreChange(Runnable func) {
-        _preChangeFunc = func;
+    public State setEnter(Runnable func) {
+        _enterFunc = func;
         return this;
     }
 
-    public State setState(Runnable func) {
+    public State setFunc(Runnable func) {
         _stateFunc = func;
         return this;
     }
 
-    public State setPostChange(Runnable func) {
-        _postChangeFunc = func;
+    public State setExit(Runnable func) {
+        _exitFunc = func;
         return this;
     }
 
-    public void preChange() {
-        if (_preChangeFunc != null) {
-            _preChangeFunc.run();
+    public void start() {
+        if (_enterFunc != null) {
+            _enterFunc.run();
         }
-    }
-
-    public void run() {
         _stateFunc.run();
     }
 
-    public void postChange() {
-        if (_postChangeFunc != null) {
-            _postChangeFunc.run();
+    public void end() {
+        if (_exitFunc != null) {
+            _exitFunc.run();
         }
     }
 
