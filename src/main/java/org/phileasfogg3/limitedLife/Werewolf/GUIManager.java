@@ -217,7 +217,6 @@ public class GUIManager implements Listener {
                 if (title.equals("§cVOTE TO ELIMINATE A PLAYER")) {
                     player.setMetadata("voteClicked", new FixedMetadataValue(LimitedLife.Instance, true));
                     player.closeInventory();
-                    WerewolfCommand.accusationInProgress = false;
 
                     // TODO VOTE COUNTING LOGIC (VOTE FOR)
                 }
@@ -226,7 +225,6 @@ public class GUIManager implements Listener {
                 if (title.equals("§cVOTE TO ELIMINATE A PLAYER")) {
                     player.setMetadata("voteClicked", new FixedMetadataValue(LimitedLife.Instance, true));
                     player.closeInventory();
-                    WerewolfCommand.accusationInProgress = false;
 
                     // TODO VOTE COUNTING LOGIC (VOTE AGAINST)
                 }
@@ -273,6 +271,8 @@ public class GUIManager implements Listener {
 
                 player.playSound(player.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1.0f, 1.0f);
                 player.closeInventory();
+
+                VotingManager.voteActive = true;
 
                 Bukkit.broadcastMessage(ChatColor.GREEN + player.getName() + ChatColor.GRAY + " has accused " + ChatColor.RED + itemClickedName + ", you can cast your vote in 10 seconds.");
 

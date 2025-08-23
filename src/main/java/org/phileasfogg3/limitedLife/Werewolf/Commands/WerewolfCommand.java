@@ -10,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.phileasfogg3.limitedLife.LimitedLife;
 import org.phileasfogg3.limitedLife.Werewolf.GUIManager;
+import org.phileasfogg3.limitedLife.Werewolf.VotingManager;
 import org.phileasfogg3.limitedLife.Werewolf.WerewolfLogger;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class WerewolfCommand implements CommandExecutor, TabCompleter {
             switch (args[0].toLowerCase()) {
 
                 case "accuse":
-                    if (!accusationInProgress) {
+                    if (!accusationInProgress && !VotingManager.voteActive) {
                         List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
                         players.remove(player);
                         GUIManager.open(player, ChatColor.RED + "Accuse a fellow Villager", players);
