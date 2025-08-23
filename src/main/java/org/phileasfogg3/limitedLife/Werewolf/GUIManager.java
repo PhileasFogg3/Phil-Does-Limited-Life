@@ -4,6 +4,7 @@ import net.nexia.nexiaapi.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.phileasfogg3.limitedLife.LimitedLife;
 import org.phileasfogg3.limitedLife.Werewolf.Commands.WerewolfCommand;
 
@@ -152,11 +154,9 @@ public class GUIManager implements Listener {
 
         ItemStack yes = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
         ItemStack no = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        ItemStack filler = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
 
         ItemMeta yesMeta = yes.getItemMeta();
         ItemMeta noMeta = no.getItemMeta();
-        ItemMeta fillerMeta = filler.getItemMeta();
 
         if (yesMeta != null) {
             yesMeta.setDisplayName(ChatColor.GREEN + "Eliminate " + ChatColor.RED + accusedPlayer);
@@ -176,25 +176,12 @@ public class GUIManager implements Listener {
             noMeta.setLore(lore);
         }
 
-        if (fillerMeta != null) {
-            fillerMeta.setDisplayName("§kHELLO THERE");
-        }
-
         yes.setItemMeta(yesMeta);
         no.setItemMeta(noMeta);
-        filler.setItemMeta(fillerMeta);
 
         inv.setItem(12, yes);
         inv.setItem(14, no);
 
-        for (int i = 0; i < inv.getSize(); i++) {
-
-            ItemStack item = inv.getItem(i);
-
-            if (item == null) {
-                inv.setItem(i, filler);
-            }
-        }
         return inv;
     }
 
@@ -226,6 +213,24 @@ public class GUIManager implements Listener {
                     WerewolfCommand.accusationInProgress = false;
                 }
                 break;
+            case LIME_STAINED_GLASS_PANE:
+                if (title.equals("§cVOTE TO ELIMINATE A PLAYER")) {
+                    player.setMetadata("voteClicked", new FixedMetadataValue(LimitedLife.Instance, true));
+                    player.closeInventory();
+                    WerewolfCommand.accusationInProgress = false;
+
+                    // TODO VOTE COUNTING LOGIC (VOTE FOR)
+                }
+                break;
+            case RED_STAINED_GLASS_PANE:
+                if (title.equals("§cVOTE TO ELIMINATE A PLAYER")) {
+                    player.setMetadata("voteClicked", new FixedMetadataValue(LimitedLife.Instance, true));
+                    player.closeInventory();
+                    WerewolfCommand.accusationInProgress = false;
+
+                    // TODO VOTE COUNTING LOGIC (VOTE AGAINST)
+                }
+                break;
             default:
                 System.out.println("Something else");
         }
@@ -250,13 +255,24 @@ public class GUIManager implements Listener {
                 break;
             case "§6Select a player to learn their role":
                 break;
-
+            case "§cVOTE TO ELIMINATE A PLAYER":
+                Bukkit.getScheduler().runTaskLater(LimitedLife.Instance, () -> {
+                    if (!player.hasMetadata("voteClicked")) {
+                        player.openInventory(e.getInventory());
+                    } else {
+                        player.removeMetadata("voteClicked", LimitedLife.Instance);
+                    }
+                }, 1L);
+                break;
         }
     }
 
     public void handleClick(Player player, String title, String itemClickedName) {
         switch (title) {
             case "§cAccuse a fellow Villager":
+
+                player.playSound(player.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1.0f, 1.0f);
+                player.closeInventory();
 
                 Bukkit.broadcastMessage(ChatColor.GREEN + player.getName() + ChatColor.GRAY + " has accused " + ChatColor.RED + itemClickedName + ", you can cast your vote in 10 seconds.");
 
@@ -265,7 +281,7 @@ public class GUIManager implements Listener {
                         p.openInventory(createVoteInv(itemClickedName));
                     }
                 }, 200L);
-                
+
                 break;
             case "§aSelect a player to Heal":
                 break;
