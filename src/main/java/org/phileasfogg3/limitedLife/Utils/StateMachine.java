@@ -30,6 +30,10 @@ public class StateMachine<T> {
     }
 
     public boolean setState(T state) {
+        if (_currentState == state) {
+            return false;
+        }
+
         if (!_states.containsKey(state)) {
             return false;
         }
