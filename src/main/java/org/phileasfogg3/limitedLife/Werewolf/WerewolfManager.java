@@ -26,6 +26,26 @@ public class WerewolfManager {
         stateManager.onMorning.add(() -> {
             clearInteractions();
         });
+        stateManager.onVoting.add(() -> {
+           // enable voting
+        });
+        stateManager.onNight.add(() -> {
+            // disable voting
+        });
+        stateManager.onSleep.add(() -> {
+            // add blindness to all players
+        });
+        stateManager.onActions.add(() -> {
+            // freeze tick
+            // freeze players
+            // open gui ?
+            // add max limit timer
+            // when people are done doing their actions or max limit is reached, we can proceed
+        });
+        stateManager.onActionsExit.add(() -> {
+            // unfreeze tick
+            // unfreeze players
+        });
     }
 
     public void initialisePlayers(Player player) {

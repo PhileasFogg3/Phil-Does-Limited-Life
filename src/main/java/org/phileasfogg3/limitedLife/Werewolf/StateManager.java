@@ -19,12 +19,10 @@ public class StateManager {
         Waiting, // Initial waiting time (idle)
         Roles,   // Roles are picked here then wait for morning
         Morning, // Time before voting starts (idle)
-        Voting,  // Voting lasts for a couple of minutes
-        Roaming, // Time for interactions (idle)
-        Night,   // Waiting for nighttime (idle)
+        Voting,  // Voting lasts till nighttime
+        Night,   // Waiting for sleep (idle)
         Sleep,   // Blindness begins to simulate sleep
-        Actions, // Time for special actions
-        WakeUp,  // Blindness is removed
+        Actions, // Time for special actions (1,5 min)
     }
 
     private final StateMachine<GameStates> _gameState = new StateMachine<>();
@@ -36,11 +34,10 @@ public class StateManager {
     public List<Runnable> onRoles = new ArrayList<>();
     public List<Runnable> onMorning = new ArrayList<>();
     public List<Runnable> onVoting = new ArrayList<>();
-    public List<Runnable> onRoaming = new ArrayList<>();
     public List<Runnable> onNight = new ArrayList<>();
     public List<Runnable> onSleep = new ArrayList<>();
     public List<Runnable> onActions = new ArrayList<>();
-    public List<Runnable> onWakeUp = new ArrayList<>();
+    public List<Runnable> onActionsExit = new ArrayList<>();
 
     public StateManager(Config werewolf) {
 
@@ -54,11 +51,9 @@ public class StateManager {
         _gameState.addState(GameStates.Roles, this::roles).setExit(this::exitRoles);
         _gameState.addState(GameStates.Morning, this::morning);
         _gameState.addState(GameStates.Voting, this::voting);
-        _gameState.addState(GameStates.Roaming, this::roaming);
-        _gameState.addState(GameStates.Actions, this::actions);
+        _gameState.addState(GameStates.Actions, this::actions).setExit(this::exitActions);
         _gameState.addState(GameStates.Night, this::night);
         _gameState.addState(GameStates.Sleep, this::sleep);
-        _gameState.addState(GameStates.WakeUp, this::wakeUp);
 
         _gameState.onStateChanged.add(s -> Bukkit.broadcastMessage(ChatColor.BOLD + "" + ChatColor.GOLD + "New state: " + s.toString())); // TEMPORARY
         _gameState.setState(GameStates.Disabled);
@@ -103,10 +98,6 @@ public class StateManager {
         onVoting.forEach(Runnable::run);
     }
 
-    private void roaming() {
-        onRoaming.forEach(Runnable::run);
-    }
-
     private void night() {
         onNight.forEach(Runnable::run);
     }
@@ -119,8 +110,8 @@ public class StateManager {
         onActions.forEach(Runnable::run);
     }
 
-    private void wakeUp() {
-        onWakeUp.forEach(Runnable::run);
+    private void exitActions() {
+        onActionsExit.forEach(Runnable::run);
     }
 
     public void start() {
@@ -146,12 +137,10 @@ public class StateManager {
     private void loop() {
         long time = getTime();
 
-        if (time >= 0 && time < 1000) _gameState.setState(GameStates.WakeUp);
-        else if (time < 4600) _gameState.setState(GameStates.Morning);
-        else if (time < 12000) _gameState.setState(GameStates.Voting);
-        else if (time < 13000) _gameState.setState(GameStates.Roaming);
-        else if (time < 18000) _gameState.setState(GameStates.Night);
-        else if (time < 21600) _gameState.setState(GameStates.Sleep);
-        else if (time < 24000) _gameState.setState(GameStates.Actions);
+        if (time < 1000) _gameState.setState(GameStates.Morning);
+        else if (time < 6000) _gameState.setState(GameStates.Voting);
+        else if (time < 13000) _gameState.setState(GameStates.Night);
+        else if (time < 22000-40) _gameState.setState(GameStates.Sleep);
+        else if (time < 22000) _gameState.setState(GameStates.Actions);
     }
 }
