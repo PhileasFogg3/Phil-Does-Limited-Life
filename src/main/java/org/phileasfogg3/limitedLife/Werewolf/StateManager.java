@@ -81,7 +81,7 @@ public class StateManager {
         // Check time every 10 seconds and set to morning on time 0
         task = Bukkit.getScheduler().runTaskTimer(LimitedLife.Instance, () -> {
             long time = getTime();
-            if (time < 6000 && time > 0) {
+            if (time < 1000 && time >= 0) {
                 task.cancel();
                 task = null;
                 Bukkit.getScheduler().runTaskLater(LimitedLife.Instance, () -> {
