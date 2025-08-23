@@ -244,7 +244,7 @@ public class PlayerListener implements Listener {
         Map<String, Object> playerMap = getPlayerValues(player);
 
         List<String> deathList = playerData.getData().getStringList("players." + player.getUniqueId() + ".Deaths");
-        
+
         deathList.add(deathMessage);
 
         playerMap.put("Deaths", deathList);

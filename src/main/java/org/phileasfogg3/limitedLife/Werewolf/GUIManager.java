@@ -92,6 +92,13 @@ public class GUIManager implements Listener {
             placed++;
         }
 
+        ItemStack barrier = getItemStack(title);
+        inv.setItem(size - 1, barrier);
+
+        return inv;
+    }
+
+    private static ItemStack getItemStack(String title) {
         ItemStack barrier = new ItemStack(Material.BARRIER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         if (barrierMeta != null) {
@@ -114,9 +121,7 @@ public class GUIManager implements Listener {
             barrierMeta.setLore(lore);
             barrier.setItemMeta(barrierMeta);
         }
-        inv.setItem(size - 1, barrier);
-
-        return inv;
+        return barrier;
     }
 
     public static void openHeal(Player player) {
