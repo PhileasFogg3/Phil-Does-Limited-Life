@@ -72,10 +72,12 @@ public class PlayerListener implements Listener {
         if (gameMgr.getData().getBoolean("session-active") && !gameMgr.getData().getBoolean("break-active")) {
             LimitedLife.Instance.playerTimes.put(uuid, timeLeft);
 
-            // Start countdown
-            TimerManager timer = new TimerManager(player, uuid, playerData, gameMgr);
-            timer.runTaskTimer(LimitedLife.Instance, 20L, 20L); // start after 1s, repeat every 1s
-            LimitedLife.Instance.countdowns.put(uuid, timer);
+            // Start countdown only if they have time left
+            if (playerData.getData().getLong("players." + uuid + ".Time") >= 0L) {
+                TimerManager timer = new TimerManager(player, uuid, playerData, gameMgr);
+                timer.runTaskTimer(LimitedLife.Instance, 20L, 20L); // start after 1s, repeat every 1s
+                LimitedLife.Instance.countdowns.put(uuid, timer);
+            }
         }
 
         // Relevant to Werewolf
@@ -179,6 +181,10 @@ public class PlayerListener implements Listener {
 
         Long newTime = timeLeft - time;
 
+        if (newTime <= 0) {
+            newTime = 0L;
+        }
+
         playerMap.put("Time", newTime);
         saveConfig(player, playerMap);
 
@@ -187,7 +193,7 @@ public class PlayerListener implements Listener {
         // Elimination check
         if (newTime <= 0) {
             System.out.println(player.getName() + " has been eliminated");
-            // You could also add a title or message here if needed
+
         }
 
         // Display correct time deducted
@@ -202,7 +208,7 @@ public class PlayerListener implements Listener {
         }
 
         PlayerNameManager PNM = new PlayerNameManager(playerData, gameMgr);
-        PNM.checkUpdate(timeLeft, player);
+        PNM.checkUpdate(newTime, player);
     }
 
     public void addTime(Player player, Long time) {
@@ -232,7 +238,7 @@ public class PlayerListener implements Listener {
         }
 
         PlayerNameManager PNM = new PlayerNameManager(playerData, gameMgr);
-        PNM.checkUpdate(timeLeft, player);
+        PNM.checkUpdate(newTime, player);
     }
 
 

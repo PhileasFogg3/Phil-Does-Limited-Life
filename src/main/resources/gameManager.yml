@@ -30,8 +30,16 @@ session-timings:
 #
 # Boogeyman Settings
 boogeymen-settings:
-  boogeymen-count: 1 # How many players should be boogeymen?
+  boogeymen-count: 1 # How many players should be boogeymen? Set to 0 to disable boogeymen drawing automatically.
   boogeymen-draw-time: 300 # Time in seconds until the boogeymen is drawn after session start.
+#
+#
+#
+# Do you want to enable any special game rules?
+specials:
+  DoubleLife: #Players have soulmates. Soulmates share a health bar.
+    enabled: false
+    soulmates-draw-time: 300
 #
 #
 #

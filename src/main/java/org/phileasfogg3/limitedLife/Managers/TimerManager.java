@@ -36,6 +36,7 @@ public class TimerManager extends BukkitRunnable {
         }
 
         long timeLeft = LimitedLife.Instance.playerTimes.getOrDefault(uuid, 0L);
+
         if (timeLeft <= 0) {
             player.sendTitle(ChatColor.RED + "YOU ARE OUT OF TIME", "");
             player.setGameMode(GameMode.SPECTATOR);
@@ -48,6 +49,15 @@ public class TimerManager extends BukkitRunnable {
                 onlinePlayers.playSound(onlinePlayers.getLocation(), sound, volume, pitch);
                 onlinePlayers.sendMessage(ChatColor.RED + player.getName() + " has ran out of time!");
             }
+
+            if (gameMgr.getData().getBoolean("specials.DoubleLife.enabled")) {
+
+                SoulmatesManager.markExpired(player);
+
+            }
+
+            PlayerNameManager PNM = new PlayerNameManager(playerData, gameMgr);
+            PNM.setTABListTime(player, formatTime(timeLeft), "white");
 
             cancel();
             return;

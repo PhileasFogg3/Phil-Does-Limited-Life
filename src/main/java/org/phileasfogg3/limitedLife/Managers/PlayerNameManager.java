@@ -23,6 +23,7 @@ public class PlayerNameManager {
     public void checkUpdate(Long time, Player player) {
 
         int expectedLife;
+        int newLife;
 
         if (time >= 57600) {
 
@@ -32,9 +33,13 @@ public class PlayerNameManager {
 
             expectedLife = 2;
 
-        } else {
+        } else if (time > 0) {
 
             expectedLife = 1;
+
+        } else {
+
+            expectedLife = 0;
 
         }
 
@@ -42,25 +47,15 @@ public class PlayerNameManager {
 
         if ( actualLife != expectedLife) {
 
-            // Logic for lowering number of lives
-
-            int result = actualLife - expectedLife;
-            int newLife = 0;
-
             Map<String, Object> playerDataMap = getPlayerValues(player);
 
-            if (result == 1) {
-                newLife = actualLife - 1;
-            } else {
-                newLife = actualLife + 1;
-            }
-
-            playerDataMap.put("Life", newLife);
+            playerDataMap.put("Life", expectedLife);
             saveConfig(player, playerDataMap);
+
 
             // Call Methods for changing colour
 
-            teamManager(player, newLife);
+            teamManager(player, expectedLife);
 
         }
 

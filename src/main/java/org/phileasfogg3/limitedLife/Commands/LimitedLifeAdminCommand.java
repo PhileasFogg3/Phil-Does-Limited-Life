@@ -13,6 +13,8 @@ import org.phileasfogg3.limitedLife.LimitedLife;
 import org.phileasfogg3.limitedLife.Listeners.PlayerListener;
 import org.phileasfogg3.limitedLife.Managers.BoogeymenManager;
 import org.phileasfogg3.limitedLife.Managers.SessionManager;
+import org.phileasfogg3.limitedLife.Managers.SoulmatesManager;
+import org.phileasfogg3.limitedLife.Utils.SoulmateLink;
 
 import java.util.*;
 
@@ -23,13 +25,12 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
     private Config messagesData;
     private Config werewolf;
 
-    private static final List<String> SUBCOMMANDS = Arrays.asList("sessionstart", "cure", "confirm", "resume", "addtime", "subtracttime", "rollboogeymen");
+    private static final List<String> BASE_SUBCOMMANDS = Arrays.asList("sessionstart", "cure", "confirm", "resume", "addtime", "subtracttime", "rollboogeymen", "pause", "unpause");
     private static final List<String> SESSION_START = Arrays.asList("");
     private static final List<String> BOOGEY_ROLL_1 = Arrays.asList("<number of boogeymen>");
     private static final List<String> CONFIRM = Arrays.asList("");
     private static final List<String> RESUME = Arrays.asList("");
     private static final List<String> BOOGEY_ROLL_2 = Arrays.asList("<time in seconds until draw>");
-    private static final List<String> SUBTRACT_TIME = Arrays.asList("");
 
     public LimitedLifeAdminCommand(Config playerData, Config gameMgr, Config messagesData, Config werewolf) {
 
@@ -49,7 +50,7 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
             if (args.length == 0) {
 
                 // Unknown command, too few arguments
-                noPermissionRant(player);
+                player.sendMessage(ChatColor.RED + "WHAT ON EARTH ARE YOU TRYING TO DO?");
                 return true;
             }
 
@@ -112,9 +113,31 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
                     case "rollboogeymen":
                         handleBoogeyManRoll(sender, args);
                         break;
+                    case "pause":
+                        handlePause(sender, args);
+                        break;
+                    case "unpause":
+                        handleUnPause(sender, args);
+                        break;
+                    case "rollsoulmates":
+                        if (gameMgr.getData().getBoolean("specials.DoubleLife.enabled")) {
+                            handleRollSoulmates(sender, args);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Soulmates are not enabled in this session");
+                        }
+                        break;
+                    case "partner":
+                        if (gameMgr.getData().getBoolean("specials.DoubleLife.enabled")) {
+
+                            handlePartner(sender, args);
+
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Soulmates are not enabled in this session");
+                        }
+                        break;
                     default:
                         //Unkown Command
-                        noPermissionRant(player);
+                        player.sendMessage(ChatColor.RED + "WHAT ON EARTH ARE YOU TRYING TO DO?");
                 }
             } else {
                 // No permission error
@@ -180,6 +203,8 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
                     PlayerListener PL = new PlayerListener(playerData, gameMgr, messagesData, werewolf);
                     PL.addTime(targetPlayer, time);
 
+                    player.sendMessage(ChatColor.GREEN + "Added " + time + " seconds to " + playerName);
+
                 }
 
             } else {
@@ -213,6 +238,8 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
 
                     PlayerListener PL = new PlayerListener(playerData, gameMgr, messagesData, werewolf);
                     PL.subtractTime(targetPlayer, time);
+
+                    player.sendMessage(ChatColor.GREEN + "Removed " + time + " seconds from " + playerName);
 
                 }
 
@@ -250,7 +277,144 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
                     bM.announceBoogeymanDraw(time);
 
                 } catch (NumberFormatException e) {
+
                     player.sendMessage(ChatColor.RED + "The values must be a number, not: " + args[1] + " " + args[2]);
+
+                }
+            } else {
+                noPermissionRant(player);
+            }
+        }
+    }
+
+    private void handleRollSoulmates(CommandSender sender, String[] args) {
+
+        if (sender instanceof Player) {
+
+            Player player = (Player) sender;
+
+            if (player.hasPermission("limitedlife.admin")) {
+
+                if (args.length < 2) {
+                    player.sendMessage(ChatColor.RED + "Please specify how long it is until the soulmate draw");
+                    return;
+                }
+
+                try {
+                    long time = Long.parseLong(args[1]);
+
+                    SoulmatesManager SM = new SoulmatesManager(playerData);
+                    SM.selectSoulmates(time);
+                    SM.announceSoulmates(time);
+                } catch (NumberFormatException e) {
+
+                    player.sendMessage(ChatColor.RED + "The values must be a number, not: " + args[1]);
+
+                }
+
+            } else {
+                noPermissionRant(player);
+            }
+        }
+    }
+
+    private void handlePartner(CommandSender sender, String[] args) {
+
+        if (sender instanceof Player) {
+
+            Player player = (Player) sender;
+
+            if (player.hasPermission("limitedlife.admin")) {
+
+                if (args.length < 2) {
+
+                    player.sendMessage(ChatColor.RED + "Please specify who you want to check.");
+                    return;
+
+                }
+
+                String playerName = args[1];
+                Player targetPlayer = Bukkit.getServer().getPlayerExact(playerName);
+
+                SoulmateLink link = SoulmatesManager.linkedPlayers.get(targetPlayer.getUniqueId());
+
+                Player soulmate = Bukkit.getPlayer(link.getPartner());
+
+                if (link.isPartnerExpired()) {
+
+                    player.sendMessage(ChatColor.GREEN + targetPlayer.getName() + "'s partner is " + soulmate.getName() + " (expired)");
+
+                } else {
+
+                    player.sendMessage(ChatColor.GREEN + targetPlayer.getName() + "'s partner is " + soulmate.getName());
+
+                }
+
+            } else {
+                noPermissionRant(player);
+            }
+
+        }
+
+    }
+
+    private void handlePause(CommandSender sender, String[] args) {
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            if (player.hasPermission("limitedlife.admin")) {
+
+                if (gameMgr.getData().getBoolean("break-active")) {
+
+                    player.sendMessage(ChatColor.RED + "You cannot pause the break, break time means the game is already paused, silly");
+
+                } else if (!gameMgr.getData().getBoolean("session-active")) {
+
+                    player.sendMessage(ChatColor.RED + "You cannot pause something that has not yet started. Dum Dum");
+
+                } else {
+
+                    SessionManager SM = new SessionManager(gameMgr, playerData, messagesData);
+                    SM.stopCountdown();
+
+                    gameMgr.getData().set("break-active", true);
+                    gameMgr.save();
+
+                    Bukkit.broadcastMessage(ChatColor.RED + "THE SESSION HAS BEEN PAUSED. GO LOOK AT THE ECLIPSE BUT DON'T STARE AT IT DIRECTLY PLS. GOTTA PROTECT YOUR EYES SO WE CAN PLAY MINECRAFT!");
+
+                }
+            } else {
+                noPermissionRant(player);
+            }
+        }
+    }
+
+    private void handleUnPause(CommandSender sender, String[] args) {
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            if (player.hasPermission("limitedlife.admin")) {
+
+                if (!gameMgr.getData().getBoolean("break-active")) {
+
+                    player.sendMessage(ChatColor.RED + "You cannot unpause something that has not been paused!");
+
+                } else if (!gameMgr.getData().getBoolean("session-active")) {
+
+                    player.sendMessage(ChatColor.RED + "You cannot unpause something that has not been started!");
+
+                } else {
+
+                    SessionManager SM = new SessionManager(gameMgr, playerData, messagesData);
+                    SM.startCountdown();
+
+                    gameMgr.getData().set("break-active", false);
+                    gameMgr.save();
+
+                    Bukkit.broadcastMessage(ChatColor.RED + "THE SESSION HAS BEEN UN-PAUSED. DID YOU MANAGE TO SEE THE ECLIPSE? YES?!!! WOOOOOOOOOHHOOOOOOOO");
+
                 }
             } else {
                 noPermissionRant(player);
@@ -262,15 +426,23 @@ public class LimitedLifeAdminCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (!command.getName().equalsIgnoreCase("limitedlifeadmin")) return Collections.emptyList();
 
+        List<String> subcommands = new ArrayList<>(BASE_SUBCOMMANDS);
+
+        if (gameMgr.getData().getBoolean("specials.DoubleLife.enabled")) {
+
+            subcommands.add("rollsoulmates");
+            subcommands.add("partner");
+        }
+
         if (args.length == 1) {
-            return partialMatch(args[0], SUBCOMMANDS);
+            return partialMatch(args[0], subcommands);
         }
 
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
                 case "sessionstart":
                     return partialMatch(args[1], SESSION_START);
-                case "cure", "subtracttime", "addtime":
+                case "cure", "subtracttime", "addtime", "partner":
                     return partialMatch(args[1], Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
                 case "confirm":
                     return partialMatch(args[1], CONFIRM);

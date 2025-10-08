@@ -13,3 +13,6 @@ commands:
   limitedlifeadmin:
     description: Main admin command
     usage: /limitedlifeadmin <sessionStart|cure|addTime|subtractTime|confirm|resume|rollboogeymen>
+  donate:
+    description: Give time to your soulmate
+    usage: /donate <seconds/minutes/hours> <amount of time>

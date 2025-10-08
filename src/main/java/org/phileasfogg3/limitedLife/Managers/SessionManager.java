@@ -195,24 +195,35 @@ public class SessionManager {
         gameMgr.getData().set("session-active", true);
         gameMgr.save();
         sessionTimeInitializer();
-        // Picks boogeymen
-        BoogeymenManager bM = new BoogeymenManager(gameMgr, playerData, messagesData);
-        bM.selectBoogeymen(gameMgr.getData().getInt("boogeymen-settings.boogeymen-count"), gameMgr.getData().getInt("boogeymen-settings.boogeymen-draw-time"));
-        bM.announceBoogeymanDraw(gameMgr.getData().getInt("boogeymen-settings.boogeymen-draw-time"));
-        // Distribute Pets
+        // Picks boogeymen if there is at least 1 boogey in the config file.
+        if (gameMgr.getData().getInt("boogeymen-settings.boogeymen-count") != 0) {
+            BoogeymenManager bM = new BoogeymenManager(gameMgr, playerData, messagesData);
+            bM.selectBoogeymen(gameMgr.getData().getInt("boogeymen-settings.boogeymen-count"), gameMgr.getData().getInt("boogeymen-settings.boogeymen-draw-time"));
+            bM.announceBoogeymanDraw(gameMgr.getData().getInt("boogeymen-settings.boogeymen-draw-time"));
+        }
+        // Do we want to play with double life rules?
+        if (gameMgr.getData().getBoolean("specials.DoubleLife.enabled")) {
+            SoulmatesManager SM = new SoulmatesManager(playerData);
+            SM.selectSoulmates(gameMgr.getData().getLong("specials.DoubleLife.soulmates-draw-time"));
+            SM.announceSoulmates(gameMgr.getData().getInt("specials.DoubleLife.soulmates-draw-time"));
+        }
     }
 
     public void startCountdown() {
         for (Player onlinePlayers : Bukkit.getServer().getOnlinePlayers()) {
 
-            LimitedLife.Instance.playerTimes.put(onlinePlayers.getUniqueId(), playerData.getData().getLong("players." + onlinePlayers.getUniqueId() + ".Time"));
-
-            // Start countdown
-            TimerManager timer = new TimerManager(onlinePlayers, onlinePlayers.getUniqueId(), playerData, gameMgr);
-            timer.runTaskTimer(LimitedLife.Instance, 20L, 20L); // start after 1s, repeat every 1s
-            LimitedLife.Instance.countdowns.put(onlinePlayers.getUniqueId(), timer);
+            startCountdown(onlinePlayers);
 
         }
+    }
+
+    public void startCountdown(Player player) {
+
+        LimitedLife.Instance.playerTimes.put(player.getUniqueId(), playerData.getData().getLong("players." + player.getUniqueId() + ".Time"));
+        TimerManager timer = new TimerManager(player, player.getUniqueId(), playerData, gameMgr);
+        timer.runTaskTimer(LimitedLife.Instance, 20L, 20L);
+        LimitedLife.Instance.countdowns.put(player.getUniqueId(), timer);
+
     }
 
     public void stopCountdown() {

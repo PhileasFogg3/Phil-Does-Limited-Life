@@ -5,11 +5,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
+import org.phileasfogg3.limitedLife.Commands.Donate;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeAdminCommand;
 import org.phileasfogg3.limitedLife.Commands.LimitedLifeCommand;
 import org.phileasfogg3.limitedLife.Listeners.MobListener;
 import org.phileasfogg3.limitedLife.Listeners.PlayerListener;
 import org.phileasfogg3.limitedLife.Listeners.RecipieViewer;
+import org.phileasfogg3.limitedLife.Listeners.SoulmateListener;
 import org.phileasfogg3.limitedLife.Managers.RecipesManager;
 import org.phileasfogg3.limitedLife.Managers.TeamsManager;
 import org.phileasfogg3.limitedLife.Managers.TimerManager;
@@ -55,6 +57,7 @@ public final class LimitedLife extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(playerData, gameMgr, messagesData, werewolf), this);
         getServer().getPluginManager().registerEvents(new RecipieViewer(), this);
         getServer().getPluginManager().registerEvents(new MobListener(gameMgr), this);
+        getServer().getPluginManager().registerEvents(new SoulmateListener(), this);
 
     }
 
@@ -66,6 +69,10 @@ public final class LimitedLife extends JavaPlugin {
         LimitedLifeAdminCommand adminCommand = new LimitedLifeAdminCommand(playerData, gameMgr, messagesData, werewolf);
         getCommand("limitedlifeadmin").setExecutor(adminCommand);
         getCommand("limitedlifeadmin").setTabCompleter(adminCommand);
+
+        Donate donateCommand = new Donate(playerData, gameMgr, messagesData, werewolf);
+        getCommand("donate").setExecutor(donateCommand);
+        getCommand("donate").setTabCompleter(donateCommand);
     }
 
 
